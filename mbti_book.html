@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 성격 맞춤 도서 탐험대</title>
+    <style>
+        body { font-family: 'Nanum Gothic', sans-serif; background-color: #fff9c4; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        #game-box { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 90%; max-width: 550px; text-align: center; border: 5px solid #ffeb3b; }
+        h1 { color: #f57f17; font-size: 1.8rem; }
+        #question { font-size: 1.3rem; margin: 20px 0; min-height: 60px; color: #333; font-weight: bold; }
+        .btn-list { display: flex; flex-direction: column; gap: 12px; }
+        button { padding: 15px; font-size: 1.1rem; cursor: pointer; border: none; border-radius: 15px; background-color: #ffca28; color: #5d4037; font-weight: bold; transition: 0.3s; }
+        button:hover { background-color: #ffa000; transform: scale(1.03); }
+        #result { display: none; }
+        .book-card { background: #f1f8e9; padding: 15px; border-radius: 15px; margin-top: 15px; border-left: 5px solid #8bc34a; text-align: left; }
+        .season-title { font-weight: bold; color: #2e7d32; }
+    </style>
+</head>
+<body>
+
+<div id="game-box">
+    <h1>📖 성격 맞춤 도서 탐험대</h1>
+    
+    <div id="quiz-section">
+        <div id="question">준비되셨나요? 나에게 더 가까운 것을 골라보세요!</div>
+        <div class="btn-list" id="answer-buttons">
+            <button onclick="startGame()">탐험 시작하기!</button>
+        </div>
+    </div>
+
+    <div id="result">
+        <h2 id="mbti-type">나의 타입은...</h2>
+        <p id="mbti-desc"></p>
+        <div id="book-list"></div>
+        <button onclick="location.reload()" style="margin-top: 20px; background-color: #cfd8dc;">다시 테스트하기</button>
+    </div>
+</div>
+
+<script>
+    // 1. 질문 데이터 (아이들의 성향 파악)
+    const questions = [
+        { q: "쉬는 시간에 나는?", a: "친구들과 시끌벅적하게 놀기", b: "혼자 자리에 앉아 책 읽거나 낙서하기", type: "EI" },
+        { q: "새로운 게임을 할 때 나는?", a: "설명서를 꼼꼼히 읽고 시작하기", b: "일단 해보면서 방법을 찾아내기", type: "SN" },
+        { q: "친구가 속상해서 울고 있다면?", a: "왜 속상한지 이유를 물어보기", b: "말없이 다독여주며 같이 슬퍼해주기", type: "TF" },
+        { q: "내 방 책상은 어떤 모습인가요?", a: "항상 제자리에 깔끔하게 정리되어 있음", b: "자유롭게 물건들이 놓여 있음", type: "JP" }
+    ];
+
+    // 2. 성격 유형별 추천 도서 데이터
+    const recommendations = {
+        "ENFJ": { desc: "따뜻하고 리더십 있는 당신!", spring: "두 배로 행복해지는 법", summer: "모두를 위한 평화", autumn: "어린 왕자", winter: "크리스마스 선물" },
+        "INFP": { desc: "상상력이 풍부하고 마음이 깊은 당신!", spring: "비밀의 정원", summer: "은하철도의 밤", autumn: "빨강머리 앤", winter: "눈의 여왕" },
+        "ESTJ": { desc: "똑 부러지게 할 일을 잘하는 당신!", spring: "어린이를 위한 경제 습관", summer: "위인전 세종대왕", autumn: "나도 논리왕", winter: "정리 정돈의 마법" },
+        "ISFP": { desc: "예술적이고 다정한 마음을 가진 당신!", spring: "나무를 심은 사람", summer: "수박 수영장", autumn: "가을을 파는 가게", winter: "작은 아씨들" }
+        // (지면상 주요 4개 예시만 작성했습니다. 실제로는 16개를 모두 추가할 수 있어요!)
+    };
+
+    let currentIdx = 0;
+    let scores = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
+
+    function startGame() {
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById('question').innerText = q.q;
+        const btnArea = document.getElementById('answer-buttons');
+        btnArea.innerHTML = `
+            <button onclick="selectAnswer('${q.type[0]}')">${q.a}</button>
+            <button onclick="selectAnswer('${q.type[1]}')">${q.b}</button>
+        `;
+    }
+
+    function selectAnswer(type) {
+        scores[type]++;
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+
+        // MBTI 결과 조합
+        let mbti = "";
+        mbti += scores.E >= scores.I ? "E" : "I";
+        mbti += scores.S >= scores.N ? "S" : "N";
+        mbti += scores.T >= scores.F ? "T" : "F";
+        mbti += scores.J >= scores.P ? "J" : "P";
+
+        // 결과 기본값 (데이터가 없을 경우를 위해)
+        const rec = recommendations[mbti] || recommendations["INFP"]; 
+        
+        document.getElementById('mbti-type').innerText = `✨ 나의 타입: ${mbti}`;
+        document.getElementById('mbti-desc').innerText = rec.desc;
+
+        const bookList = document.getElementById('book-list');
+        bookList.innerHTML = `
+            <div class="book-card"><span class="season-title">🌸 봄:</span> ${rec.spring}</div>
+            <div class="book-card"><span class="season-title">☀️ 여름:</span> ${rec.summer}</div>
+            <div class="book-card"><span class="season-title">🍂 가을:</span> ${rec.autumn}</div>
+            <div class="book-card"><span class="season-title">❄️ 겨울:</span> ${rec.winter}</div>
+        `;
+    }
+</script>
+
+</body>
+</html>

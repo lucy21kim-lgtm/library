@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학교 도서관 놀이터</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Dongle:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FFB347; /* Pastel Orange */
+            --secondary-color: #87CEEB; /* Sky Blue */
+            --accent-color: #FF6961; /* Pastel Red */
+            --bg-color: #FDFCF0;
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Jua', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #4A4A4A;
+            margin: 0;
+            text-shadow: 2px 2px 0px #FFF, 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        p.subtitle {
+            font-size: 1.5rem;
+            color: #777;
+            margin-top: 10px;
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .menu-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid transparent;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Individual Card Themes */
+        .card-1 { border-color: #FFB347; }
+        .card-1:hover { background-color: #FFF3E0; }
+        .card-1 .icon { background-color: #FFB347; }
+
+        .card-2 { border-color: #8BC34A; }
+        .card-2:hover { background-color: #F1F8E9; }
+        .card-2 .icon { background-color: #8BC34A; }
+
+        .card-3 { border-color: #87CEEB; }
+        .card-3:hover { background-color: #E1F5FE; }
+        .card-3 .icon { background-color: #87CEEB; }
+
+        .card-4 { border-color: #FF6961; }
+        .card-4:hover { background-color: #FFEBEE; }
+        .card-4 .icon { background-color: #FF6961; }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            margin: 0;
+            color: #444;
+        }
+
+        .card-desc {
+            font-family: 'Dongle', sans-serif;
+            font-size: 1.4rem;
+            color: #666;
+            margin-top: 5px;
+            line-height: 1.2;
+        }
+
+        /* Decoration circles */
+        .circle {
+            position: absolute;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+        }
+
+        footer {
+            margin-top: auto;
+            margin-bottom: 20px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .menu-container {
+                grid-template-columns: 1fr;
+            }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🏫 학교 도서관 놀이터</h1>
+        <p class="subtitle">재미있는 활동을 선택해보세요!</p>
+    </header>
+
+    <div class="menu-container">
+        <!-- Menu 1 -->
+        <a href="Egg_game.html" class="menu-card card-1">
+            <div class="icon">🦖</div>
+            <h2 class="card-title">독서 펫 키우기</h2>
+            <div class="card-desc">책을 읽고 나만의 공룡을 키워봐요!</div>
+        </a>
+
+        <!-- Menu 2 -->
+        <a href="Tree_platn.html" class="menu-card card-2">
+            <div class="icon">🌳</div>
+            <h2 class="card-title">나무 이야기</h2>
+            <div class="card-desc">이야기를 순서대로 맞추고 나무를 심어요.</div>
+        </a>
+
+        <!-- Menu 3 -->
+        <a href="mbti_book.html" class="menu-card card-3">
+            <div class="icon">📚</div>
+            <h2 class="card-title">나의 인생 책</h2>
+            <div class="card-desc">나에게 딱 맞는 책을 찾아볼까요?</div>
+        </a>
+
+        <!-- Menu 4 -->
+        <a href="time_timer.html" class="menu-card card-4">
+            <div class="icon">⏱️</div>
+            <h2 class="card-title">집중 타이머</h2>
+            <div class="card-desc">시간을 정해두고 독서에 집중해요!</div>
+        </a>
+    </div>
+
+    <footer>
+        &copy; 2024 우리 학교 도서관. 즐거운 독서 되세요!
+    </footer>
+
+</body>
+</html>

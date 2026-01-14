@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>나무를 심은 사람 - 자석 요약 게임</title>
+    <style>
+        body {
+            font-family: 'Nanum Gothic', sans-serif;
+            background-color: #f0f7f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 { color: #2e7d32; }
+        .instruction { margin-bottom: 20px; color: #555; }
+        
+        /* 게임 보드 */
+        #game-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1000px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* 왼쪽: 카드 더미 */
+        #card-pool {
+            width: 300px;
+            min-height: 400px;
+            background: #fff;
+            border: 2px dashed #8bc34a;
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* 오른쪽: 정답 슬롯 */
+        #drop-zones {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .slot {
+            width: 500px;
+            height: 100px;
+            background: #e8f5e9;
+            border: 2px solid #c8e6c9;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            position: relative;
+        }
+
+        .slot::before {
+            content: attr(data-step);
+            position: absolute;
+            left: -40px;
+            font-weight: bold;
+            color: #2e7d32;
+            font-size: 1.2rem;
+        }
+
+        /* 카드 스타일 */
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: grab;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            user-select: none;
+        }
+
+        .card img {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .dragging { opacity: 0.5; }
+
+        /* 버튼 */
+        #check-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #check-btn:hover { background-color: #388e3c; }
+        
+        .success { background-color: #c8e6c9 !important; border-color: #4caf50 !important; }
+        .error { background-color: #ffcdd2 !important; border-color: #f44336 !important; }
+    </style>
+</head>
+<body>
+
+    <h1>🌳 나무를 심은 사람 요약하기</h1>
+    <p class="instruction">이야기의 순서에 맞게 카드를 오른쪽 빈칸으로 드래그하여 옮겨보세요!</p>
+
+    <div id="game-container">
+        <div id="card-pool"></div>
+
+        <div id="drop-zones">
+            <div class="slot" data-step="1" data-answer="2"></div>
+            <div class="slot" data-step="2" data-answer="4"></div>
+            <div class="slot" data-step="3" data-answer="1"></div>
+            <div class="slot" data-step="4" data-answer="3"></div>
+        </div>
+    </div>
+
+    <button id="check-btn" onclick="checkAnswer()">정답 확인하기!</button>
+
+    <script>
+        // 스토리 데이터 (id는 정답 순서입니다)
+        const storyData = [
+            { id: 1, text: "전쟁 중에도 할아버지는 묵묵히 나무를 심었고, 어린 나무들이 숲을 이루기 시작했어요.", img: "🌲" },
+            { id: 2, text: "여행자는 황폐하고 메마른 땅에서 홀로 도토리를 심고 있는 부피에 할아버지를 만났어요.", img: "👨‍🌾" },
+            { id: 3, text: "시간이 흘러 마을에는 물이 흐르고 꽃이 피었으며, 사람들이 돌아와 행복하게 살게 되었어요.", img: "🏡" },
+            { id: 4, text: "할아버지는 매일 정성껏 고른 도토리 100알을 정성스럽게 땅에 심으셨어요.", img: "🌰" }
+        ];
+
+        const cardPool = document.getElementById('card-pool');
+        const slots = document.querySelectorAll('.slot');
+
+        // 카드 섞기 및 생성
+        function initGame() {
+            const shuffled = [...storyData].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.draggable = true;
+                card.id = `card-${item.id}`;
+                card.innerHTML = `
+                    <div style="font-size: 30px;">${item.img}</div>
+                    <p>${item.text}</p>
+                `;
+                
+                card.addEventListener('dragstart', dragStart);
+                card.addEventListener('dragend', dragEnd);
+                cardPool.appendChild(card);
+            });
+        }
+
+        // 드래그앤드롭 로직
+        let draggedCard = null;
+
+        function dragStart() {
+            draggedCard = this;
+            setTimeout(() => this.classList.add('dragging'), 0);
+        }
+
+        function dragEnd() {
+            this.classList.remove('dragging');
+        }
+
+        slots.forEach(slot => {
+            slot.addEventListener('dragover', e => e.preventDefault());
+            slot.addEventListener('drop', function(e) {
+                e.preventDefault();
+                if (this.children.length === 0) {
+                    this.appendChild(draggedCard);
+                }
+            });
+        });
+
+        cardPool.addEventListener('dragover', e => e.preventDefault());
+        cardPool.addEventListener('drop', function() {
+            this.appendChild(draggedCard);
+        });
+
+        // 정답 체크
+        function checkAnswer() {
+            let allCorrect = true;
+            slots.forEach(slot => {
+                const card = slot.querySelector('.card');
+                const answerId = slot.getAttribute('data-answer');
+                
+                if (card && card.id === `card-${answerId}`) {
+                    slot.classList.remove('error');
+                    slot.classList.add('success');
+                } else {
+                    slot.classList.remove('success');
+                    slot.classList.add('error');
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                alert("훌륭해요! 엘제아르 부피에 할아버지처럼 인내심이 대단하시네요! 🎉");
+            } else {
+                alert("다시 한번 생각해보세요. 이야기의 흐름이 맞는지 확인해볼까요?");
+            }
+        }
+
+        initGame();
+    </script>
+</body>
+</html>

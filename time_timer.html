@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>10분 집중 독서 챌린지</title>
+    <style>
+        body { font-family: 'Nanum Gothic', sans-serif; background-color: #f0f9ff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #game-box { background: white; padding: 40px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 450px; text-align: center; border: 6px solid #4fc3f7; }
+        
+        h1 { color: #0288d1; margin-bottom: 10px; font-size: 24px; }
+        .sub-title { color: #546e7a; margin-bottom: 25px; }
+
+        /* 타이머 숫자 스타일 */
+        #timer { font-size: 70px; font-weight: bold; color: #333; margin: 20px 0; font-family: monospace; }
+
+        /* 게이지 바 스타일 */
+        .progress-container { background: #e1f5fe; border-radius: 20px; height: 25px; width: 100%; margin-bottom: 30px; position: relative; overflow: hidden; }
+        #progress-bar { background: linear-gradient(90deg, #4fc3f7, #0288d1); height: 100%; width: 0%; transition: 1s linear; }
+
+        /* 버튼 스타일 */
+        .btn-group { display: flex; gap: 10px; justify-content: center; }
+        button { padding: 15px 30px; font-size: 1.1rem; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        #start-btn { background-color: #4caf50; color: white; }
+        #stop-btn { background-color: #ff5252; color: white; display: none; }
+        button:hover { transform: scale(1.05); opacity: 0.9; }
+
+        /* 미션 성공 화면 */
+        #success-msg { display: none; margin-top: 20px; padding: 20px; background: #fff9c4; border-radius: 15px; border: 2px dashed #fbc02d; }
+        .badge { font-size: 50px; }
+    </style>
+</head>
+<body>
+
+<div id="game-box">
+    <h1>🚀 10분 집중 독서 탐험</h1>
+    <p class="sub-title">책 속에 숨겨진 보물을 찾으러 떠나요!</p>
+
+    <div class="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <div id="timer">10:00</div>
+
+    <div class="btn-group">
+        <button id="start-btn" onclick="startMission()">미션 시작!</button>
+        <button id="stop-btn" onclick="stopMission()">잠시 멈춤</button>
+    </div>
+
+    <div id="success-msg">
+        <div class="badge">🏆</div>
+        <h3>미션 성공!</h3>
+        <p>오늘의 집중력을 모두 모았어요.<br>당신은 이제 <b>'독서 마법사'</b>입니다!</p>
+        <button onclick="location.reload()" style="background:#0288d1; color:white; font-size:0.8rem; padding:8px 15px;">다시 도전</button>
+    </div>
+</div>
+
+<script>
+    let timeLeft = 600; // 10분 = 600초
+    let timerId = null;
+    const totalTime = 600;
+
+    const timerDisplay = document.getElementById('timer');
+    const progressBar = document.getElementById('progress-bar');
+    const startBtn = document.getElementById('start-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const successMsg = document.getElementById('success-msg');
+
+    function updateDisplay() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        
+        // 0:0 형태로 안 나오게 00:00 형태로 포맷팅
+        timerDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // 게이지 바 업데이트
+        let progress = ((totalTime - timeLeft) / totalTime) * 100;
+        progressBar.style.width = progress + "%";
+    }
+
+    function startMission() {
+        // 버튼 상태 변경
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-block';
+
+        timerId = setInterval(() => {
+            timeLeft--;
+            updateDisplay();
+
+            if (timeLeft <= 0) {
+                clearInterval(timerId);
+                finishMission();
+            }
+        }, 1000);
+    }
+
+    function stopMission() {
+        clearInterval(timerId);
+        startBtn.innerText = "계속하기";
+        startBtn.style.display = 'inline-block';
+        stopBtn.style.display = 'none';
+    }
+
+    function finishMission() {
+        timerDisplay.style.display = 'none';
+        stopBtn.style.display = 'none';
+        progressBar.style.width = "100%";
+        successMsg.style.display = 'block';
+        
+        // 축하 효과음 대신 브라우저 알림
+        alert("축하합니다! 10분 독서 미션을 완수했습니다!");
+    }
+</script>
+
+</body>
+</html>
